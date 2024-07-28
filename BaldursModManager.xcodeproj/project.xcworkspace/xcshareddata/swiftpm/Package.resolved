@@ -1,4 +1,5 @@
 {
+  "originHash" : "522820a4308d00494c3d70d3975c333c75eb0cadeefaf1d89c867fa8a6b97cc4",
   "pins" : [
     {
       "identity" : "alerttoast",
@@ -8,7 +9,25 @@
         "branch" : "master",
         "revision" : "638f38f9daf08e17b7caea22d2fcb9c0a418d1b6"
       }
+    },
+    {
+      "identity" : "binaryutils",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/divadretlaw/BinaryUtils.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "3afcfe2ea15a4f19f8c1fa322bc1e01261873405"
+      }
+    },
+    {
+      "identity" : "lskit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/divadretlaw/LSKit.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "547f53fb56222cae6bf39b7f0dbb4c7b80aad0b7"
+      }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

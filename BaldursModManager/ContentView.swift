@@ -8,6 +8,8 @@
 import SwiftUI
 import SwiftData
 import AlertToast
+import LSKit
+import UniformTypeIdentifiers
 
 let UIDELAY: CGFloat = 0.01
 
@@ -393,13 +395,20 @@ struct ContentView: View {
   
   private func selectFile() {
     let openPanel = NSOpenPanel()
-    openPanel.canChooseFiles = false
+    openPanel.canChooseFiles = true
+    openPanel.allowedContentTypes = [.lspk]
+    openPanel.allowsOtherFileTypes = false
     openPanel.canChooseDirectories = true
     openPanel.allowsMultipleSelection = false
     openPanel.begin { response in
-      if response == .OK, let selectedDirectory = openPanel.url {
-        Debug.log("Selected directory: \(selectedDirectory.path)")
-        parseImportedModFolder(at: selectedDirectory)
+      if response == .OK, let url = openPanel.url {
+          if url.hasDirectoryPath {
+              Debug.log("Selected directory: \(url.path)")
+              parseImportedModFolder(at: url)
+          } else {
+              Debug.log("Selected pak: \(url.path)")
+              parseImportedMod(at: url)
+          }
       }
     }
   }
@@ -420,6 +429,15 @@ struct ContentView: View {
       }
     }
   }
+  
+    private func parseImportedMod(at url: URL) {
+        do {
+            let pak = try ModLSPK(url: url)
+            createNewModItemFrom(pak: pak)
+        } catch {
+            showToastError("Unable to locate meta.lsx file of imported mod.")
+        }
+    }
   
   private func getModItem(byUuid uuid: String) -> ModItem? {
     return modItems.first(where: { $0.modUuid == uuid })
@@ -522,7 +540,70 @@ struct ContentView: View {
       showToastError("Unable to resolve pakFileString", withLogDetails: "from directoryContents: \(directoryContents)")
     }
   }
-  
+
+    private func createNewModItemFrom(pak: ModLSPK) {
+        let pakFileString = pak.url.path
+        guard
+            let name = pak.meta.moduleInfo?.publishVersion?.name,
+            let folder = pak.meta.moduleInfo?.publishVersion?.folder,
+            let uuid = pak.meta.moduleInfo?.publishVersion?.uuid,
+            let md5 = pak.meta.moduleInfo?.publishVersion?.md5
+        else {
+            return
+        }
+
+        var newOrderNumber = nextOrderValue()
+        var replaceWithOrderNumber: Int?
+
+        // Check if the mod item needs replacing
+        if let modItemNeedsReplacing = getModItem(byUuid: uuid) {
+            replaceWithOrderNumber = modItemNeedsReplacing.order
+            let success = deleteModItem(byUuid: uuid, forUpdateReplacement: true)
+            if success {
+                if let oldOrderNumber = replaceWithOrderNumber {
+                    newOrderNumber = oldOrderNumber
+                    showToastSuccess("Mod updated successfully")
+                }
+            } else {
+                showToastError("Unable to delete mod \(modItemNeedsReplacing.modName)")
+                return
+            }
+        }
+
+        withAnimation {
+            // TODO: Create Mod Item not based on directoryURL, directoryPath & directoryContents
+            let newModItem = ModItem(
+                order: newOrderNumber,
+                directoryUrl: pak.url,
+                directoryPath: pak.url.path,
+                directoryContents: [],
+                pakFileString: pakFileString,
+                name: name,
+                folder: folder,
+                uuid: uuid,
+                md5: md5
+            )
+
+            newModItem.modAuthor = pak.meta.moduleInfo?.publishVersion?.author
+            newModItem.modDescription = pak.meta.moduleInfo?.publishVersion?.description
+            newModItem.modAuthor = pak.meta.moduleInfo?.publishVersion?.author
+            newModItem.modVersion = pak.meta.moduleInfo?.publishVersion?.version
+
+            Debug.log("Adding new mod item with order: \(newOrderNumber), name: \(name)")
+            addNewModItem(newModItem, orderNumber: newOrderNumber, fromDirectoryUrl: pak.url) {
+
+                if UserSettings.shared.enableModOnImport {
+                    withAnimation {
+                        newModItem.isEnabled.toggle()
+                        modItemManager.toggleModItem(newModItem)
+                        save()
+                        updateOrderOfModItems()
+                    }
+                }
+            }
+        }
+    }
+
   private func addNewModItem(_ modItem: ModItem, orderNumber: Int, fromDirectoryUrl directoryUrl: URL, completion: @escaping () -> Void) {
     modelContext.insert(modItem)
     

@@ -54,6 +54,7 @@
 		29FC3F942C050A4F006097DD /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FC3F902C050A4F006097DD /* UpdateManager.swift */; };
 		29FC3F962C050C63006097DD /* Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FC3F952C050C63006097DD /* Delay.swift */; };
 		29FC3F982C0510E2006097DD /* ContentView+UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FC3F972C0510E2006097DD /* ContentView+UpdateManager.swift */; };
+		6317DDC92C5692C500EEC606 /* LSKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6317DDC82C5692C500EEC606 /* LSKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -112,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6317DDC92C5692C500EEC606 /* LSKit in Frameworks */,
 				298069B52B59F44F006CDB94 /* AlertToast in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -336,6 +338,7 @@
 			name = BaldursModManager;
 			packageProductDependencies = (
 				298069B42B59F44F006CDB94 /* AlertToast */,
+				6317DDC82C5692C500EEC606 /* LSKit */,
 			);
 			productName = BaldursModManager;
 			productReference = 29DD55E52B4875EC003729AD /* BaldursModManager.app */;
@@ -367,6 +370,7 @@
 			mainGroup = 29DD55DC2B4875EC003729AD;
 			packageReferences = (
 				298069B32B59F44F006CDB94 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				6317DDC72C5692C500EEC606 /* XCRemoteSwiftPackageReference "LSKit" */,
 			);
 			productRefGroup = 29DD55E62B4875EC003729AD /* Products */;
 			projectDirPath = "";
@@ -678,6 +682,14 @@
 				kind = branch;
 			};
 		};
+		6317DDC72C5692C500EEC606 /* XCRemoteSwiftPackageReference "LSKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/divadretlaw/LSKit.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -685,6 +697,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 298069B32B59F44F006CDB94 /* XCRemoteSwiftPackageReference "AlertToast" */;
 			productName = AlertToast;
+		};
+		6317DDC82C5692C500EEC606 /* LSKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6317DDC72C5692C500EEC606 /* XCRemoteSwiftPackageReference "LSKit" */;
+			productName = LSKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
